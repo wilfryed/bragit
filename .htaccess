@@ -1,0 +1,4 @@
+Options +FollowSymlinks
+RewriteEngine On
+	
+RewriteRule ^user/$ index.php?page=user [L]	

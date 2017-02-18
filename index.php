@@ -1,28 +1,35 @@
-<!doctype html>
-<html class="no-js" lang="en" dir="ltr">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="x-ua-compatible" content="ie=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Brag it!</title>
-        <link rel="stylesheet" href="css/foundation.css">
-        <link rel="stylesheet" href="css/app.css">
-    </head>
-    <body>
-        <div class="row">
-            <div class="large-12 columns">
-                <h1>Brag it!</h1>
-            </div>
-        </div>
-        <div class="row">
-            <a href="https://www.instagram.com/oauth/authorize/?client_id=&redirect_uri=" class="btn">login</a>
-        </div>
-        
+<?php 
+session_start();
 
+error_reporting(E_ALL);
+ini_set("display_errors", 1);
 
-        <script src="js/vendor/jquery.js"></script>
-        <script src="js/vendor/what-input.js"></script>
-        <script src="js/vendor/foundation.js"></script>
-        <script src="js/app.js"></script>
-    </body>
-</html>
+include("ini.php");
+include("includes/header.php"); 
+include("functions.php"); 
+
+require 'Mustache/Autoloader.php';
+Mustache_Autoloader::register();
+
+$options =  array('extension' => '.html');
+
+$m = new Mustache_Engine(array(
+    'loader' => new Mustache_Loader_FilesystemLoader(dirname(__FILE__) . '/templates/', $options),
+));
+
+$page = getPage();
+
+if (file_exists("class/".$page.".php")){
+    include("class/".$page.".php"); 
+}
+
+if (file_exists("includes/".$page.".php")){
+    include("includes/".$page.".php"); 
+}
+
+$tpl = $m->loadTemplate($page);
+echo $tpl->render($content);
+
+?>
+
+<?php include("includes/footer.php"); ?>

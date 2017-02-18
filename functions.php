@@ -1,29 +1,49 @@
 <?php
 
-error_reporting(E_ALL);
-ini_set("display_errors", 1);
+function getPage(){
 
-$c = curl_init();
+    if (isset($_GET["page"]) && $_GET["page"] != '' ){
+        $page = $_GET["page"];
+    }else{
+        $page = "home";
+    }
 
-$url = "https://api.instagram.com/v1/users/self/media/recent/?access_token=&max_id=";
+    return $page;
 
-$ch = curl_init();
+}
 
-// EXECUTE THE CURL…
-curl_setopt($ch, CURLOPT_URL,$url);
-curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
-curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); //to suppress the curl output
-$result = curl_exec($ch);
-curl_close ($ch);
+function isLogged(){
 
-$result = json_decode($result, true);
-$likes = 0;
-$count = 0;
+    if (isset($_SESSION['logged']) && $_SESSION['logged'] == true){
+        if (isset($_SESSION['userid']) && $_SESSION['userid'] != ''){
+            return true;
+        }else{
+            return false;
+        }
+    }else{
+        return false;
+    }
 
-//echo $result["data"][count($result["data"])-1]["caption"]["id"];
-foreach ($result["data"] as $data){
-    $likes += $data["likes"]["count"];
-    $count++;
+}
+
+function curlIt($url, $post = false){
+
+    $ch = curl_init();
+
+    curl_setopt($ch, CURLOPT_URL,$url);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+    if ($post){
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
+    }
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); //to suppress the curl output
+    $result = curl_exec($ch);
+    curl_close ($ch);
+
+    $result = json_decode($result, true);
+
+    return $result;
+
 }
 ?>
